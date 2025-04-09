@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ClassSessionController;
 use App\Http\Controllers\Api\StudentClassController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
+use App\Http\Controllers\Api\UploadFileController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -39,6 +40,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // API thống kê (nếu cần phát triển sau)
     // Tất cả lớp của một giáo viên
     Route::get('teacher/{teacherId}/classes', [ClassModelController::class, 'getClassesByTeacher']);
-    // Upload ảnh học sinh (avatar)
-    Route::post('students/{id}/upload-file', [StudentController::class, 'uploadFile']);
+    // Upload file
+    Route::post('/upload', [UploadFileController::class, 'upload']);
 });
