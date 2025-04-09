@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAttendanceRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use App\Services\AttendanceService;
+use Illuminate\Support\Facades\Request;
 
 class AttendanceController extends Controller
 {
@@ -53,5 +54,11 @@ class AttendanceController extends Controller
         return response()->json([
             'message' => 'Xóa bản ghi điểm danh thành công',
         ]);
+    }
+
+    public function bulkStore(Request $request)
+    {
+        $this->attendanceService->bulkStore($request);
+        return response()->json(['message' => 'Điểm danh thành công.']);
     }
 }

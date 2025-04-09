@@ -37,4 +37,19 @@ class ClassModelService
     {
         return $this->classRepository->destroy($id);
     }
+
+    public function getStudents($classId)
+    {
+        return $this->classRepository->getStudents($classId);
+    }
+
+    public function getSessions($classId)
+    {
+        return $this->classRepository->getSessions($classId);
+    }
+
+    public function getClassesByTeacher($teacherId)
+    {
+        return $this->classRepository->getClassesByTeacher($teacherId);
+    }
 }

@@ -13,4 +13,10 @@ interface ClassModelRepositoryInterface
     public function update($id, $data);
 
     public function destroy($id);
+
+    public function getStudents($classId);
+
+    public function getSessions($classId);
+
+    public function getClassesByTeacher($teacherId);
 }

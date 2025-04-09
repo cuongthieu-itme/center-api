@@ -58,4 +58,32 @@ class ClassModelController extends Controller
             'message' => 'Xóa lớp học thành công'
         ]);
     }
+
+    public function getStudentsInClass($id)
+    {
+        $students = $this->classService->getStudents($id);
+        return response()->json([
+            'class_id' => $id,
+            'students' => $students
+        ]);
+    }
+
+    public function getClassSessions($id)
+    {
+        $sessions = $this->classService->getSessions($id);
+
+        return response()->json([
+            'class_id' => $id,
+            'sessions' => $sessions
+        ]);
+    }
+
+    public function getClassesByTeacher($teacherId)
+    {
+        $classes = $this->classService->getClassesByTeacher($teacherId);
+        return response()->json([
+            'teacher_id' => $teacherId,
+            'classes' => $classes
+        ]);
+    }
 }

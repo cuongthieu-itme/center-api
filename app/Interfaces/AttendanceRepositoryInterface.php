@@ -13,4 +13,6 @@ interface AttendanceRepositoryInterface
     public function update($id, $data);
 
     public function destroy($id);
+
+    public function bulkStore(array $data);
 }

@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Interfaces\StudentRepositoryInterface;
+use Exception;
+use Illuminate\Support\Facades\Validator;
 
 class StudentService
 {
@@ -36,5 +38,27 @@ class StudentService
     public function destroy($id): bool
     {
         return $this->studentRepository->destroy($id);
+    }
+
+    public function getAttendanceHistory($studentId)
+    {
+        return $this->studentRepository->getAttendanceHistory($studentId);
+    }
+
+    public function uploadFile($file)
+    {
+        $validator = Validator::make(['file' => $file], [
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            throw new Exception('Ảnh không hợp lệ');
+        }
+
+        $fileName = 'avatar_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+        $path = $file->storeAs('avatars', $fileName, 'public');
+
+        return $path;
     }
 }

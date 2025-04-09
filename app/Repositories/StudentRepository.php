@@ -69,4 +69,25 @@ class StudentRepository implements StudentRepositoryInterface
             throw new Exception('Xóa học viên thất bại.');
         }
     }
+
+    public function getAttendanceHistory($studentId)
+    {
+        $student = Student::findOrFail($studentId);
+
+        return $student->attendances()
+            ->with(['classSession.classModel'])
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function ($attendance) {
+                return [
+                    'class_name' => $attendance->classSession->classModel->class_name,
+                    'session_date' => $attendance->classSession->session_date,
+                    'start_time' => $attendance->classSession->start_time,
+                    'end_time' => $attendance->classSession->end_time,
+                    'status' => $attendance->status,
+                    'check_in_time' => $attendance->check_in_time,
+                    'check_out_time' => $attendance->check_out_time,
+                ];
+            });
+    }
 }

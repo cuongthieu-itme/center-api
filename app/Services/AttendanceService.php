@@ -37,4 +37,9 @@ class AttendanceService
     {
         return $this->attendanceRepository->destroy($id);
     }
+
+    public function bulkStore($data)
+    {
+        return $this->attendanceRepository->bulkStore($data);
+    }
 }

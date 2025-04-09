@@ -29,6 +29,6 @@ class ClassModel extends Model
 
     public function classSessions()
     {
-        return $this->hasMany(ClassSession::class);
+        return $this->hasMany(ClassSession::class, 'class_id');
     }
 }

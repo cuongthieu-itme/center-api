@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Services\StudentService;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
+use Exception;
+use Illuminate\Support\Facades\Request;
 
 class StudentController extends Controller
 {
@@ -57,5 +59,34 @@ class StudentController extends Controller
         return response()->json([
             'message' => 'Xóa học viên thành công'
         ]);
+    }
+
+    public function getAttendanceHistory($id)
+    {
+        $history = $this->studentService->getAttendanceHistory($id);
+        return response()->json([
+            'student_id' => $id,
+            'attendance_history' => $history
+        ]);
+    }
+
+    public function uploadFile(Request $request)
+    {
+        if (!$request->hasFile('file')) {
+            return response()->json(['message' => 'Không có file ảnh để upload'], 400);
+        }
+
+        $file = $request->file('file');
+
+        try {
+            $path = $this->studentService->uploadFile($file);
+
+            return response()->json([
+                'message' => 'Upload file thành công',
+                'file_path' => $path,
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 }

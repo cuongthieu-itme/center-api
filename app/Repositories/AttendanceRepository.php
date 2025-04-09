@@ -6,6 +6,7 @@ use App\Interfaces\AttendanceRepositoryInterface;
 use App\Models\Attendance;
 use Illuminate\Database\QueryException;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceRepository implements AttendanceRepositoryInterface
 {
@@ -67,6 +68,34 @@ class AttendanceRepository implements AttendanceRepositoryInterface
         } catch (Exception $e) {
             logger()->error("Lỗi khi xóa điểm danh ID $id: " . $e->getMessage());
             throw new Exception('Xóa bản ghi điểm danh thất bại.');
+        }
+    }
+
+    public function bulkStore(array $data)
+    {
+        try {
+            DB::beginTransaction();
+
+            foreach ($data['attendances'] as $attendance) {
+                Attendance::updateOrCreate(
+                    [
+                        'student_id' => $attendance['student_id'],
+                        'session_id' => $data['session_id']
+                    ],
+                    [
+                        'status' => $attendance['status'],
+                        'check_in_time' => $attendance['check_in_time'] ?? null,
+                        'check_out_time' => $attendance['check_out_time'] ?? null,
+                    ]
+                );
+            }
+
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            logger()->error('Lỗi điểm danh hàng loạt: ' . $e->getMessage());
+            throw $e;
         }
     }
 }

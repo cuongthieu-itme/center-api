@@ -69,4 +69,38 @@ class ClassModelRepository implements ClassModelRepositoryInterface
             throw new Exception('Xóa lớp học thất bại.');
         }
     }
+
+    public function getStudents($classId)
+    {
+        try {
+            $class = ClassModel::with('students')->findOrFail($classId);
+            return $class->students;
+        } catch (Exception $e) {
+            logger()->error("Lỗi khi lấy danh sách học sinh của lớp $classId: " . $e->getMessage());
+            throw new Exception('Không thể lấy danh sách học sinh.');
+        }
+    }
+
+    public function getSessions($classId)
+    {
+        try {
+            $class = ClassModel::with('classSessions')->findOrFail($classId);
+            return $class->classSessions()->orderBy('session_date')->get();
+        } catch (\Exception $e) {
+            logger()->error("Lỗi khi lấy buổi học của lớp $classId: " . $e->getMessage());
+            throw new \Exception('Không thể lấy danh sách buổi học.');
+        }
+    }
+
+    public function getClassesByTeacher($teacherId)
+    {
+        try {
+            return ClassModel::where('teacher_id', $teacherId)
+                ->with('teacher')
+                ->get();
+        } catch (Exception $e) {
+            logger()->error("Lỗi khi lấy lớp học của giáo viên ID $teacherId: " . $e->getMessage());
+            throw new Exception('Không thể lấy lớp học của giáo viên.');
+        }
+    }
 }
