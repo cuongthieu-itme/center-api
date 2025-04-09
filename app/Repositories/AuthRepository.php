@@ -20,10 +20,10 @@ class AuthRepository implements AuthRepositoryInterface
                 'password' => Hash::make($data['password']),
             ]);
         } catch (QueryException $e) {
-            logger()->error('Database error during registration: ' . $e->getMessage());
-            throw new Exception('Failed to register user. Please try again later.');
+            logger()->error('Lỗi DB khi đăng ký: ' . $e->getMessage());
+            throw new Exception('Đăng ký thất bại. Vui lòng thử lại sau.');
         } catch (Exception $e) {
-            logger()->error('Error during registration: ' . $e->getMessage());
+            logger()->error('Lỗi khi đăng ký: ' . $e->getMessage());
             throw $e;
         }
     }
@@ -44,8 +44,8 @@ class AuthRepository implements AuthRepositoryInterface
                 'token' => $token,
             ];
         } catch (Exception $e) {
-            logger()->error('Login error: ' . $e->getMessage());
-            throw new Exception('Login failed. Please try again.');
+            logger()->error('Lỗi đăng nhập: ' . $e->getMessage());
+            throw new Exception('Đăng nhập thất bại. Vui lòng thử lại.');
         }
     }
 
@@ -56,8 +56,8 @@ class AuthRepository implements AuthRepositoryInterface
             $user = Auth::user();
             $user->tokens()->delete();
         } catch (Exception $e) {
-            logger()->error('Logout error: ' . $e->getMessage());
-            throw new Exception('Logout failed. Please try again.');
+            logger()->error('Lỗi đăng xuất: ' . $e->getMessage());
+            throw new Exception('Đăng xuất thất bại. Vui lòng thử lại.');
         }
     }
 
@@ -67,8 +67,8 @@ class AuthRepository implements AuthRepositoryInterface
             /** @var User $user */
             return Auth::user();
         } catch (Exception $e) {
-            logger()->error('Profile fetch error: ' . $e->getMessage());
-            throw new Exception('Failed to retrieve user profile.');
+            logger()->error('Lỗi lấy thông tin người dùng: ' . $e->getMessage());
+            throw new Exception('Không thể lấy thông tin người dùng.');
         }
     }
 }

@@ -20,7 +20,10 @@ class AuthController extends Controller
     {
         $user = $this->authService->register($request);
 
-        return response()->json(['message' => 'User registered successfully', 'user' => $user], 201);
+        return response()->json([
+            'message' => 'Đăng ký thành công',
+            'user'    => $user
+        ], 201);
     }
 
     public function login(LoginRequest $request)
@@ -30,7 +33,7 @@ class AuthController extends Controller
         $result = $this->authService->login($credentials);
 
         if (!$result) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            return response()->json(['message' => 'Email hoặc mật khẩu không đúng'], 401);
         }
 
         return response()->json($result);
@@ -39,7 +42,7 @@ class AuthController extends Controller
     public function logout()
     {
         $this->authService->logout();
-        return response()->json(['message' => 'Logged out']);
+        return response()->json(['message' => 'Đã đăng xuất']);
     }
 
     public function me()
