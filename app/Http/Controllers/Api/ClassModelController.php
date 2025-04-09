@@ -59,9 +59,9 @@ class ClassModelController extends Controller
         ]);
     }
 
-    public function getStudentsInClass($id)
+    public function getStudentsByClass($id)
     {
-        $students = $this->classService->getStudents($id);
+        $students = $this->classService->getStudentsByClass($id);
         return response()->json([
             'class_id' => $id,
             'students' => $students

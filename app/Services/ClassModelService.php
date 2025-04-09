@@ -38,9 +38,9 @@ class ClassModelService
         return $this->classRepository->destroy($id);
     }
 
-    public function getStudents($classId)
+    public function getStudentsByClass($classId)
     {
-        return $this->classRepository->getStudents($classId);
+        return $this->classRepository->getStudentsByClass($classId);
     }
 
     public function getSessions($classId)

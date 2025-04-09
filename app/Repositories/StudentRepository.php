@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Interfaces\StudentRepositoryInterface;
+use App\Models\Attendance;
 use App\Models\Student;
 use Illuminate\Database\QueryException;
 use Exception;
@@ -72,22 +73,15 @@ class StudentRepository implements StudentRepositoryInterface
 
     public function getAttendanceHistory($studentId)
     {
-        $student = Student::findOrFail($studentId);
+        try {
+            $attendanceHistory = Attendance::with(['classSession', 'classSession.class'])
+                ->where('student_id', $studentId)
+                ->get();
 
-        return $student->attendances()
-            ->with(['classSession.classModel'])
-            ->orderByDesc('created_at')
-            ->get()
-            ->map(function ($attendance) {
-                return [
-                    'class_name' => $attendance->classSession->classModel->class_name,
-                    'session_date' => $attendance->classSession->session_date,
-                    'start_time' => $attendance->classSession->start_time,
-                    'end_time' => $attendance->classSession->end_time,
-                    'status' => $attendance->status,
-                    'check_in_time' => $attendance->check_in_time,
-                    'check_out_time' => $attendance->check_out_time,
-                ];
-            });
+            return $attendanceHistory;
+        } catch (Exception $e) {
+            logger()->error("Lỗi khi lấy lịch sử điểm danh của học sinh ID $studentId: " . $e->getMessage());
+            throw new Exception('Không thể lấy lịch sử điểm danh.');
+        }
     }
 }

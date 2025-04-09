@@ -70,14 +70,14 @@ class ClassModelRepository implements ClassModelRepositoryInterface
         }
     }
 
-    public function getStudents($classId)
+    public function getStudentsByClass($classId)
     {
         try {
             $class = ClassModel::with('students')->findOrFail($classId);
             return $class->students;
         } catch (Exception $e) {
-            logger()->error("Lỗi khi lấy danh sách học sinh của lớp $classId: " . $e->getMessage());
-            throw new Exception('Không thể lấy danh sách học sinh.');
+            logger()->error("Lỗi khi lấy danh sách học sinh của lớp học ID $classId: " . $e->getMessage());
+            throw new Exception('Không thể lấy danh sách học sinh của lớp học.');
         }
     }
 

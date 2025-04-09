@@ -30,7 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('attendance', AttendanceController::class);
 
     // Lấy danh sách học sinh theo lớp
-    Route::get('classes/{id}/students', [ClassModelController::class, 'getStudentsInClass']);
+    Route::get('classes/{id}/students', [ClassModelController::class, 'getStudentsByClass']);
     // Lấy lịch sử điểm danh của 1 học sinh
     Route::get('students/{id}/attendance-history', [StudentController::class, 'getAttendanceHistory']);
     // Lấy danh sách buổi học của 1 lớp

@@ -14,7 +14,7 @@ interface ClassModelRepositoryInterface
 
     public function destroy($id);
 
-    public function getStudents($classId);
+    public function getStudentsByClass($classId);
 
     public function getSessions($classId);
 

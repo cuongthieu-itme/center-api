@@ -69,24 +69,4 @@ class StudentController extends Controller
             'attendance_history' => $history
         ]);
     }
-
-    public function uploadFile(Request $request)
-    {
-        if (!$request->hasFile('file')) {
-            return response()->json(['message' => 'Không có file ảnh để upload'], 400);
-        }
-
-        $file = $request->file('file');
-
-        try {
-            $path = $this->studentService->uploadFile($file);
-
-            return response()->json([
-                'message' => 'Upload file thành công',
-                'file_path' => $path,
-            ]);
-        } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 400);
-        }
-    }
 }
