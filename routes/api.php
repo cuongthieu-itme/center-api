@@ -20,26 +20,34 @@ Route::prefix('auth')->group(function () {
     });
 });
 
+// Các route cần xác thực người dùng trước
 Route::middleware('auth:sanctum')->group(function () {
-    // CRUD full model
-    Route::apiResource('students', StudentController::class);
-    Route::apiResource('teachers', TeacherController::class);
-    Route::apiResource('classes', ClassModelController::class);
-    Route::apiResource('student-classes', StudentClassController::class);
-    Route::apiResource('class-sessions', ClassSessionController::class);
-    Route::apiResource('attendance', AttendanceController::class);
 
-    // Lấy danh sách học sinh theo lớp
-    Route::get('classes/{id}/students', [ClassModelController::class, 'getStudentsByClass']);
-    // Lấy lịch sử điểm danh của 1 học sinh
-    Route::get('students/{id}/attendance-history', [StudentController::class, 'getAttendanceHistory']);
-    // Lấy danh sách buổi học của 1 lớp
-    Route::get('classes/{id}/sessions', [ClassModelController::class, 'getClassSessions']);
-    // Gửi điểm danh hàng loạt
-    Route::post('attendance/bulk', [AttendanceController::class, 'bulkStore']);
-    // API thống kê (nếu cần phát triển sau)
-    // Tất cả lớp của một giáo viên
-    Route::get('teacher/{teacherId}/classes', [ClassModelController::class, 'getClassesByTeacher']);
+    // Admin có thể truy cập và quản lý tất cả các tài nguyên
+    Route::middleware('role:admin')->group(function () {
+        Route::apiResource('students', StudentController::class);
+        Route::apiResource('teachers', TeacherController::class);
+        Route::apiResource('classes', ClassModelController::class);
+        Route::apiResource('student-classes', StudentClassController::class);
+        Route::apiResource('class-sessions', ClassSessionController::class);
+        Route::apiResource('attendance', AttendanceController::class);
+
+        Route::get('teacher/{teacherId}/classes', [ClassModelController::class, 'getClassesByTeacher']);
+    });
+
+    // Teacher có thể quản lý lớp học và điểm danh của lớp mình
+    Route::middleware('role:teacher')->group(function () {
+        Route::get('classes/{id}/students', [ClassModelController::class, 'getStudentsByClass']);
+        Route::get('students/{id}/attendance-history', [StudentController::class, 'getAttendanceHistory']);
+        Route::get('classes/{id}/sessions', [ClassModelController::class, 'getClassSessions']);
+        Route::post('attendance/bulk', [AttendanceController::class, 'bulkStore']);
+    });
+
+    // Student có thể xem thông tin cá nhân và điểm danh của mình
+    Route::middleware('role:student')->group(function () {
+        Route::get('students/{id}/attendance-history', [StudentController::class, 'getAttendanceHistory']);
+    });
+
     // Upload file
     Route::post('/upload', [UploadFileController::class, 'upload']);
 });
