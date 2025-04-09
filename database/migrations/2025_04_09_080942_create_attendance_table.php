@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('attendance', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
+            $table->foreignId('session_id')->constrained('class_sessions')->onDelete('cascade');
+            $table->enum('status', ['present', 'absent', 'late']); // Có mặt, vắng mặt, đi trễ
+            $table->time('check_in_time')->nullable(); // Thời gian vào lớp
+            $table->time('check_out_time')->nullable(); // Thời gian rời lớp
             $table->timestamps();
         });
     }

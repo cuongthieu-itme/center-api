@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('class_sessions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('class_id')->constrained('classes')->onDelete('cascade');
+            $table->date('session_date'); // Ngày diễn ra buổi học
+            $table->time('start_time'); // Giờ bắt đầu
+            $table->time('end_time'); // Giờ kết thúc
             $table->timestamps();
         });
     }

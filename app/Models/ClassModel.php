@@ -26,4 +26,9 @@ class ClassModel extends Model
     {
         return $this->belongsToMany(Student::class, 'student_classes');
     }
+
+    public function classSessions()
+    {
+        return $this->hasMany(ClassSession::class);
+    }
 }
