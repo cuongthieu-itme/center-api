@@ -21,7 +21,7 @@ class UpdateStudentRequest extends FormRequest
             'phone'       => 'nullable|string|max:20',
             'email'       => 'sometimes|required|email|unique:students,email,' . $studentId,
             'address'     => 'nullable|string|max:255',
-            'avatar_url'  => 'nullable|url',
+            'avatar_url'  => 'nullable|string',
             'user_id'     => 'nullable|exists:users,id',
         ];
     }
