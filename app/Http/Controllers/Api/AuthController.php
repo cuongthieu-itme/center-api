@@ -49,4 +49,15 @@ class AuthController extends Controller
     {
         return response()->json($this->authService->me());
     }
+    
+    public function verifyAuth()
+    {
+        $result = $this->authService->verifyAuth();
+        
+        if (!$result['authenticated']) {
+            return response()->json($result, 401);
+        }
+        
+        return response()->json($result);
+    }
 }

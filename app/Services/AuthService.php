@@ -32,4 +32,9 @@ class AuthService
     {
         return $this->authRepository->me();
     }
+    
+    public function verifyAuth()
+    {
+        return $this->authRepository->verifyAuth();
+    }
 }

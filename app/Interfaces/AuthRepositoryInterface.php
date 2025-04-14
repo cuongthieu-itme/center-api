@@ -11,4 +11,6 @@ interface AuthRepositoryInterface
     public function logout();
 
     public function me();
+    
+    public function verifyAuth();
 }

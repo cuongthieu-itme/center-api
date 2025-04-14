@@ -71,4 +71,31 @@ class AuthRepository implements AuthRepositoryInterface
             throw new Exception('Không thể lấy thông tin người dùng.');
         }
     }
+    
+    public function verifyAuth()
+    {
+        try {
+            $user = Auth::user();
+            
+            if (!$user) {
+                return [
+                    'authenticated' => false,
+                    'message' => 'Token không hợp lệ hoặc đã hết hạn',
+                ];
+            }
+            
+            return [
+                'authenticated' => true,
+                'user' => $user,
+            ];
+        } catch (Exception $e) {
+            logger()->error('Lỗi xác thực token: ' . $e->getMessage());
+            
+            return [
+                'authenticated' => false,
+                'message' => 'Xác thực thất bại. Vui lòng đăng nhập lại.',
+                'error' => config('app.debug') ? $e->getMessage() : null,
+            ];
+        }
+    }
 }
