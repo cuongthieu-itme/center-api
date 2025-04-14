@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\StudentClassController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\UploadFileController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -26,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Admin có thể truy cập và quản lý tất cả các tài nguyên
     Route::middleware('role:admin')->group(function () {
+        Route::apiResource('users', UserController::class);
         Route::apiResource('students', StudentController::class);
         Route::apiResource('teachers', TeacherController::class);
         Route::apiResource('classes', ClassModelController::class);
