@@ -20,7 +20,7 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        $perPage = $request->query('per_page', 15);
+        $perPage = $request->query('per_page', 20);
         $users = $this->userService->index($perPage);
 
         return response()->json($users);

@@ -9,7 +9,7 @@ use Illuminate\Database\QueryException;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function index($perPage = 15)
+    public function index($perPage = 20)
     {
         try {
             return User::paginate($perPage);
@@ -52,13 +52,13 @@ class UserRepository implements UserRepositoryInterface
     {
         try {
             $user = User::findOrFail($id);
-            
+
             $updateData = [];
             if (isset($data['name'])) $updateData['name'] = $data['name'];
             if (isset($data['email'])) $updateData['email'] = $data['email'];
             if (isset($data['role'])) $updateData['role'] = $data['role'];
             if (isset($data['password'])) $updateData['password'] = bcrypt($data['password']);
-            
+
             $user->update($updateData);
             return $user;
         } catch (Exception $e) {

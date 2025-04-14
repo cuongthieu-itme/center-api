@@ -13,7 +13,7 @@ class UserService
         $this->userRepository = $userRepository;
     }
 
-    public function index($perPage = 15)
+    public function index($perPage = 20)
     {
         return $this->userRepository->index($perPage);
     }
