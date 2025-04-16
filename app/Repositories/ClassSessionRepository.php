@@ -15,7 +15,7 @@ class ClassSessionRepository implements ClassSessionRepositoryInterface
             $perPage = request()->get('per_page', 20);
             $page = request()->get('page', 1);
             
-            $query = ClassSession::query();
+            $query = ClassSession::query()->with('classModel');
             
             // Get all request parameters
             $params = request()->all();
@@ -54,7 +54,7 @@ class ClassSessionRepository implements ClassSessionRepositoryInterface
     public function show($id)
     {
         try {
-            return ClassSession::findOrFail($id);
+            return ClassSession::with('classModel')->findOrFail($id);
         } catch (Exception $e) {
             logger()->error("Lỗi khi tìm buổi học ID $id: " . $e->getMessage());
             throw new Exception('Không tìm thấy buổi học.');

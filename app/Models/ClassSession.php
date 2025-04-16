@@ -20,7 +20,7 @@ class ClassSession extends Model
 
     public function classModel()
     {
-        return $this->belongsTo(ClassModel::class);
+        return $this->belongsTo(ClassModel::class,'class_id');
     }
 
     public function attendance()
