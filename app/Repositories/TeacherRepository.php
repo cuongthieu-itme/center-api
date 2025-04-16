@@ -13,7 +13,38 @@ class TeacherRepository implements TeacherRepositoryInterface
     {
         try {
             $perPage = request()->get('per_page', 20);
-            return Teacher::paginate($perPage);
+            $page = request()->get('page', 1);
+            
+            $query = Teacher::query();
+            
+            // Get all request parameters
+            $params = request()->all();
+            
+            // Filter by fields
+            foreach ($params as $key => $value) {
+                // Skip pagination parameters
+                if (in_array($key, ['per_page', 'page'])) {
+                    continue;
+                }
+                
+                // Apply filters based on field type
+                if (!empty($value)) {
+                    $column = $key;
+                    
+                    // Check if column exists in the table
+                    if (in_array($column, (new Teacher())->getFillable())) {
+                        // For string fields, use LIKE for partial matching
+                        if (is_string($value) && !is_numeric($value)) {
+                            $query->where($column, 'LIKE', '%' . $value . '%');
+                        } else {
+                            // For other fields, use exact matching
+                            $query->where($column, $value);
+                        }
+                    }
+                }
+            }
+            
+            return $query->paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách giáo viên: ' . $e->getMessage());
             throw new Exception('Không thể lấy danh sách giáo viên.');

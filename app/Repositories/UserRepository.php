@@ -6,13 +6,43 @@ use App\Interfaces\UserRepositoryInterface;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
 
 class UserRepository implements UserRepositoryInterface
 {
     public function index($perPage = 20, $page = 1)
     {
         try {
-            return User::paginate($perPage, ['*'], 'page', $page);
+            $query = User::query();
+            
+            // Get all request parameters
+            $params = request()->all();
+            
+            // Filter by fields
+            foreach ($params as $key => $value) {
+                // Skip pagination parameters
+                if (in_array($key, ['per_page', 'page'])) {
+                    continue;
+                }
+                
+                // Apply filters based on field type
+                if (!empty($value)) {
+                    $column = $key;
+                    
+                    // Check if column exists in the table
+                    if (in_array($column, (new User())->getFillable())) {
+                        // For string fields, use LIKE for partial matching
+                        if (is_string($value) && !is_numeric($value)) {
+                            $query->where($column, 'LIKE', '%' . $value . '%');
+                        } else {
+                            // For other fields, use exact matching
+                            $query->where($column, $value);
+                        }
+                    }
+                }
+            }
+            
+            return $query->paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách người dùng: ' . $e->getMessage());
             throw new Exception('Không thể lấy danh sách người dùng.');
