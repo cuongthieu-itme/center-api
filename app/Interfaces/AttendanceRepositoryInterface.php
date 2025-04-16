@@ -15,4 +15,6 @@ interface AttendanceRepositoryInterface
     public function destroy($id);
 
     public function bulkStore(array $data);
+
+    public function getStudentAttendance($studentId);
 }

@@ -37,6 +37,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('teacher/{teacherId}/classes', [ClassModelController::class, 'getClassesByTeacher']);
         Route::get('teacher/{id}/students', [TeacherController::class, 'getStudents']);
+        Route::get('students/{studentId}/classes', [StudentClassController::class, 'getClassesByStudentId']);
+        Route::get('students/{studentId}/attendance', [AttendanceController::class, 'getStudentAttendance']);
     });
 
     // Teacher có thể quản lý lớp học và điểm danh của lớp mình

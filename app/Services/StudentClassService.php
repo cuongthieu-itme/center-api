@@ -37,4 +37,9 @@ class StudentClassService
     {
         return $this->studentClassRepository->destroy($id);
     }
+
+    public function getClassesByStudentId($studentId)
+    {
+        return $this->studentClassRepository->getClassesByStudentId($studentId);
+    }
 }

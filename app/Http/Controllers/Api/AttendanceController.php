@@ -61,4 +61,11 @@ class AttendanceController extends Controller
         $this->attendanceService->bulkStore($request);
         return response()->json(['message' => 'Điểm danh thành công.']);
     }
+
+    public function getStudentAttendance($studentId)
+    {
+        $attendance = $this->attendanceService->getStudentAttendance($studentId);
+        
+        return response()->json($attendance);
+    }
 }

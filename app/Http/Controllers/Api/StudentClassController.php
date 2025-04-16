@@ -58,4 +58,11 @@ class StudentClassController extends Controller
             'message' => 'Xóa học sinh khỏi lớp thành công'
         ]);
     }
+
+    public function getClassesByStudentId($studentId)
+    {
+        $classes = $this->studentClassService->getClassesByStudentId($studentId);
+        
+        return response()->json($classes);
+    }
 }

@@ -13,4 +13,6 @@ interface StudentClassRepositoryInterface
     public function update($id, $data);
 
     public function destroy($id);
+
+    public function getClassesByStudentId($studentId);
 }

@@ -100,4 +100,22 @@ class StudentClassRepository implements StudentClassRepositoryInterface
             throw new Exception('Xóa học sinh khỏi lớp thất bại.');
         }
     }
+
+    public function getClassesByStudentId($studentId)
+    {
+        try {
+            $perPage = request()->get('per_page', 20);
+            $page = request()->get('page', 1);
+            
+            $query = StudentClass::where('student_id', $studentId)
+                ->with(['classModel' => function($query) {
+                    $query->with('teacher');
+                }]);
+            
+            return $query->paginate($perPage, ['*'], 'page', $page);
+        } catch (Exception $e) {
+            logger()->error("Lỗi khi lấy danh sách lớp học của học sinh ID $studentId: " . $e->getMessage());
+            throw new Exception('Không thể lấy danh sách lớp học của học sinh.');
+        }
+    }
 }

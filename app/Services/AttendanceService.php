@@ -42,4 +42,9 @@ class AttendanceService
     {
         return $this->attendanceRepository->bulkStore($data);
     }
+
+    public function getStudentAttendance($studentId)
+    {
+        return $this->attendanceRepository->getStudentAttendance($studentId);
+    }
 }
