@@ -13,7 +13,7 @@ class UpdateTeacherRequest extends FormRequest
 
     public function rules(): array
     {
-        $teacherId = $this->route('teachers');
+        $teacherId = $this->route('teacher');
 
         return [
             'full_name'      => 'sometimes|required|string|max:255',
