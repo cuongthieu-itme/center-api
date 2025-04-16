@@ -42,6 +42,9 @@ class UserRepository implements UserRepositoryInterface
                 }
             }
             
+            // Load appropriate relationship based on role
+            $query->with(['teacher', 'student']);
+            
             return $query->paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách người dùng: ' . $e->getMessage());
@@ -53,6 +56,14 @@ class UserRepository implements UserRepositoryInterface
     {
         try {
             $user = User::findOrFail($id);
+            
+            // Load teacher or student relationships based on role
+            if ($user->role === 'teacher') {
+                $user->load('teacher');
+            } elseif ($user->role === 'student') {
+                $user->load('student');
+            }
+            
             return $user;
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy thông tin người dùng: ' . $e->getMessage());
