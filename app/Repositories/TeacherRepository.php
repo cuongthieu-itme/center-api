@@ -6,6 +6,7 @@ use App\Interfaces\TeacherRepositoryInterface;
 use App\Models\Teacher;
 use Illuminate\Database\QueryException;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class TeacherRepository implements TeacherRepositoryInterface
 {
@@ -92,10 +93,21 @@ class TeacherRepository implements TeacherRepositoryInterface
     public function destroy($id)
     {
         try {
+            DB::beginTransaction();
+            
             $teacher = Teacher::findOrFail($id);
+            
+            // Delete the associated user record if it exists
+            if ($teacher->user) {
+                $teacher->user->delete();
+            }
+            
             $teacher->delete();
+            
+            DB::commit();
             return true;
         } catch (Exception $e) {
+            DB::rollBack();
             logger()->error("Lỗi khi xóa giáo viên ID $id: " . $e->getMessage());
             throw new Exception('Xóa giáo viên thất bại.');
         }

@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use App\Models\Student;
 use Illuminate\Database\QueryException;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class StudentRepository implements StudentRepositoryInterface
 {
@@ -93,10 +94,21 @@ class StudentRepository implements StudentRepositoryInterface
     public function destroy($id)
     {
         try {
+            DB::beginTransaction();
+            
             $student = Student::findOrFail($id);
+            
+            // Delete the associated user record if it exists
+            if ($student->user) {
+                $student->user->delete();
+            }
+            
             $student->delete();
+            
+            DB::commit();
             return true;
         } catch (Exception $e) {
+            DB::rollBack();
             logger()->error("Lỗi khi xóa học viên ID $id: " . $e->getMessage());
             throw new Exception('Xóa học viên thất bại.');
         }
