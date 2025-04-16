@@ -15,7 +15,7 @@ class ClassModelRepository implements ClassModelRepositoryInterface
             $perPage = request()->get('per_page', 20);
             $page = request()->get('page', 1);
             
-            $query = ClassModel::with('teacher');
+            $query = ClassModel::with(['teacher', 'teacher.user']);
             
             // Get all request parameters
             $params = request()->all();
@@ -54,7 +54,7 @@ class ClassModelRepository implements ClassModelRepositoryInterface
     public function show($id)
     {
         try {
-            return ClassModel::with('teacher')->findOrFail($id);
+            return ClassModel::with(['teacher', 'teacher.user'])->findOrFail($id);
         } catch (Exception $e) {
             logger()->error("Lỗi khi tìm lớp học với ID $id: " . $e->getMessage());
             throw new Exception('Không tìm thấy lớp học.');
