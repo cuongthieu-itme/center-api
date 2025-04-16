@@ -16,7 +16,7 @@ class AttendanceRepository implements AttendanceRepositoryInterface
             $perPage = request()->get('per_page', 20);
             $page = request()->get('page', 1);
             
-            $query = Attendance::query();
+            $query = Attendance::with(['student', 'classSession']);
             
             // Get all request parameters
             $params = request()->all();
@@ -55,7 +55,7 @@ class AttendanceRepository implements AttendanceRepositoryInterface
     public function show($id)
     {
         try {
-            return Attendance::findOrFail($id);
+            return Attendance::with(['student', 'classSession'])->findOrFail($id);
         } catch (Exception $e) {
             logger()->error("Lỗi khi tìm điểm danh ID $id: " . $e->getMessage());
             throw new Exception('Không tìm thấy bản ghi điểm danh.');
