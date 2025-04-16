@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->string('full_name');
-            $table->date('dob'); // Ngày sinh
+            $table->date('dob')->nullable(); // Ngày sinh
             $table->string('phone')->unique()->nullable();
             $table->string('email')->unique()->nullable();
             $table->text('address')->nullable();

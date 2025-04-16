@@ -161,6 +161,7 @@ class UserRepository implements UserRepositoryInterface
                         $user->student()->create([
                             'full_name' => $user->name,
                             'email' => $user->email,
+                            'dob' => $data['dob'] ?? now()->subYears(18)->format('Y-m-d'), // Default to 18 years ago if not provided
                             'user_id' => $user->id
                         ]);
                     }
