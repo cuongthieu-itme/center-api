@@ -12,7 +12,7 @@ class ClassSessionRepository implements ClassSessionRepositoryInterface
     public function index()
     {
         try {
-            $perPage = request()->get('per_page', 10);
+            $perPage = request()->get('per_page', 20);
             return ClassSession::paginate($perPage);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách buổi học: ' . $e->getMessage());

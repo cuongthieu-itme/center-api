@@ -15,9 +15,9 @@ class StudentService
         $this->studentRepository = $studentRepository;
     }
 
-    public function index()
+    public function index($perPage = 20, $page = 1)
     {
-        return $this->studentRepository->index();
+        return $this->studentRepository->index($perPage, $page);
     }
 
     public function show($id)

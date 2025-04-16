@@ -12,7 +12,7 @@ class TeacherRepository implements TeacherRepositoryInterface
     public function index()
     {
         try {
-            $perPage = request()->get('per_page', 10);
+            $perPage = request()->get('per_page', 20);
             return Teacher::paginate($perPage);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách giáo viên: ' . $e->getMessage());

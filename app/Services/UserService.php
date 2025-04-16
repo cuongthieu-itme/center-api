@@ -13,9 +13,9 @@ class UserService
         $this->userRepository = $userRepository;
     }
 
-    public function index($perPage = 20)
+    public function index($perPage = 20, $page = 1)
     {
-        return $this->userRepository->index($perPage);
+        return $this->userRepository->index($perPage, $page);
     }
 
     public function show($id)

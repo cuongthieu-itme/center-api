@@ -10,11 +10,12 @@ use Exception;
 
 class StudentRepository implements StudentRepositoryInterface
 {
-    public function index()
+    public function index($perPage = 20, $page = 1)
     {
         try {
-            $perPage = request()->get('per_page', 10);
-            return Student::paginate($perPage);
+            $perPage = request()->get('per_page', $perPage);
+            $page = request()->get('page', $page);
+            return Student::paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách học viên: ' . $e->getMessage());
             throw new Exception('Không thể lấy danh sách học viên.');

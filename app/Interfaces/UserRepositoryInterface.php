@@ -4,7 +4,7 @@ namespace App\Interfaces;
 
 interface UserRepositoryInterface
 {
-    public function index($perPage = 15);
+    public function index($perPage = 20, $page = 1);
 
     public function show($id);
 

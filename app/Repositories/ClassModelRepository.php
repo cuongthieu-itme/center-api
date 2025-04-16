@@ -12,7 +12,7 @@ class ClassModelRepository implements ClassModelRepositoryInterface
     public function index()
     {
         try {
-            $perPage = request()->get('per_page', 10);
+            $perPage = request()->get('per_page', 20);
             return ClassModel::with('teacher')->paginate($perPage);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách lớp học: ' . $e->getMessage());

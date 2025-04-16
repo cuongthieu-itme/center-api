@@ -9,10 +9,10 @@ use Illuminate\Database\QueryException;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function index($perPage = 20)
+    public function index($perPage = 20, $page = 1)
     {
         try {
-            return User::paginate($perPage);
+            return User::paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách người dùng: ' . $e->getMessage());
             throw new Exception('Không thể lấy danh sách người dùng.');

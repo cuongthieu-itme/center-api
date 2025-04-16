@@ -20,7 +20,9 @@ class StudentController extends Controller
 
     public function index()
     {
-        $students = $this->studentService->index();
+        $perPage = request()->get('per_page', 20);
+        $page = request()->get('page', 1);
+        $students = $this->studentService->index($perPage, $page);
 
         return response()->json($students);
     }

@@ -4,7 +4,7 @@ namespace App\Interfaces;
 
 interface StudentRepositoryInterface
 {
-    public function index();
+    public function index($perPage = 20, $page = 1);
 
     public function show($id);
 

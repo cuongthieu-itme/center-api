@@ -12,7 +12,7 @@ class StudentClassRepository implements StudentClassRepositoryInterface
     public function index()
     {
         try {
-            $perPage = request()->get('per_page', 10);
+            $perPage = request()->get('per_page', 20);
             return StudentClass::paginate($perPage);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách học sinh trong lớp: ' . $e->getMessage());

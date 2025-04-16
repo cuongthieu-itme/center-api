@@ -13,7 +13,7 @@ class AttendanceRepository implements AttendanceRepositoryInterface
     public function index()
     {
         try {
-            $perPage = request()->get('per_page', 10);
+            $perPage = request()->get('per_page', 20);
             return Attendance::paginate($perPage);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách điểm danh: ' . $e->getMessage());
