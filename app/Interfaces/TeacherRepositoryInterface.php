@@ -13,4 +13,6 @@ interface TeacherRepositoryInterface
     public function update($id, $data);
 
     public function destroy($id);
+
+    public function getStudentsByTeacherId($id);
 }

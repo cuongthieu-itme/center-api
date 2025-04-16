@@ -37,4 +37,9 @@ class TeacherService
     {
         return $this->teacherRepository->destroy($id);
     }
+
+    public function getStudentsByTeacherId($id)
+    {
+        return $this->teacherRepository->getStudentsByTeacherId($id);
+    }
 }

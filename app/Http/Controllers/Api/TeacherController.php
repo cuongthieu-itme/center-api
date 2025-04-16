@@ -58,4 +58,11 @@ class TeacherController extends Controller
             'message' => 'Xóa giáo viên thành công'
         ]);
     }
+
+    public function getStudents($id)
+    {
+        $students = $this->teacherService->getStudentsByTeacherId($id);
+        
+        return response()->json($students);
+    }
 }

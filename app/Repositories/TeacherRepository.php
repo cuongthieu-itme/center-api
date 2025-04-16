@@ -100,4 +100,74 @@ class TeacherRepository implements TeacherRepositoryInterface
             throw new Exception('Xóa giáo viên thất bại.');
         }
     }
+
+    public function getStudentsByTeacherId($id)
+    {
+        try {
+            $perPage = request()->get('per_page', 20);
+            $page = request()->get('page', 1);
+            $params = request()->all();
+            
+            $teacher = Teacher::findOrFail($id);
+            
+            // Lấy tất cả lớp học của giáo viên này
+            $classes = $teacher->classes;
+            
+            // Thu thập tất cả học sinh từ các lớp học
+            $studentsCollection = collect();
+            
+            foreach ($classes as $class) {
+                $students = $class->students;
+                $studentsCollection = $studentsCollection->concat($students);
+            }
+            
+            // Loại bỏ các học sinh trùng lặp
+            $studentsCollection = $studentsCollection->unique('id');
+            
+            // Áp dụng bộ lọc
+            foreach ($params as $key => $value) {
+                // Bỏ qua tham số phân trang
+                if (in_array($key, ['per_page', 'page'])) {
+                    continue;
+                }
+                
+                // Áp dụng bộ lọc dựa trên loại trường
+                if (!empty($value)) {
+                    $studentsCollection = $studentsCollection->filter(function ($student) use ($key, $value) {
+                        // Kiểm tra nếu trường tồn tại trong model
+                        if (in_array($key, (new \App\Models\Student())->getFillable())) {
+                            // Đối với trường chuỗi, sử dụng contains cho tìm kiếm một phần
+                            if (is_string($value) && !is_numeric($value)) {
+                                return str_contains(strtolower($student->$key), strtolower($value));
+                            } else {
+                                // Đối với các trường khác, sử dụng so sánh chính xác
+                                return $student->$key == $value;
+                            }
+                        }
+                        return true;
+                    });
+                }
+            }
+            
+            // Phân trang thủ công
+            $total = $studentsCollection->count();
+            $lastPage = ceil($total / $perPage);
+            $items = $studentsCollection->forPage($page, $perPage)->values();
+            
+            // Tạo đối tượng phân trang thủ công
+            $paginatedResult = new \Illuminate\Pagination\LengthAwarePaginator(
+                $items,
+                $total,
+                $perPage,
+                $page,
+                ['path' => request()->url(), 'query' => request()->query()]
+            );
+            
+            return $paginatedResult;
+            
+        } catch (Exception $e) {
+            logger()->error("Lỗi khi lấy danh sách học sinh của giáo viên ID $id: " . $e->getMessage());
+            throw new Exception('Không thể lấy danh sách học sinh của giáo viên.');
+        }
+    }
 }
