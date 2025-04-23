@@ -2,35 +2,34 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\ClassModelRepositoryInterface;
 use App\Models\ClassModel;
 use Illuminate\Database\QueryException;
 use Exception;
 
-class ClassModelRepository implements ClassModelRepositoryInterface
+class ClassModelRepository
 {
     public function index()
     {
         try {
             $perPage = request()->get('per_page', 20);
             $page = request()->get('page', 1);
-            
+
             $query = ClassModel::with(['teacher', 'teacher.user']);
-            
+
             // Get all request parameters
             $params = request()->all();
-            
+
             // Filter by fields
             foreach ($params as $key => $value) {
                 // Skip pagination parameters
                 if (in_array($key, ['per_page', 'page'])) {
                     continue;
                 }
-                
+
                 // Apply filters based on field type
                 if (!empty($value)) {
                     $column = $key;
-                    
+
                     // Check if column exists in the table
                     if (in_array($column, (new ClassModel())->getFillable())) {
                         // For string fields, use LIKE for partial matching
@@ -43,7 +42,7 @@ class ClassModelRepository implements ClassModelRepositoryInterface
                     }
                 }
             }
-            
+
             return $query->paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách lớp học: ' . $e->getMessage());

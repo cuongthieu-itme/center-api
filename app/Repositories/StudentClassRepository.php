@@ -2,35 +2,34 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\StudentClassRepositoryInterface;
 use App\Models\StudentClass;
 use Illuminate\Database\QueryException;
 use Exception;
 
-class StudentClassRepository implements StudentClassRepositoryInterface
+class StudentClassRepository
 {
     public function index()
     {
         try {
             $perPage = request()->get('per_page', 20);
             $page = request()->get('page', 1);
-            
+
             $query = StudentClass::query();
-            
+
             // Get all request parameters
             $params = request()->all();
-            
+
             // Filter by fields
             foreach ($params as $key => $value) {
                 // Skip pagination parameters
                 if (in_array($key, ['per_page', 'page'])) {
                     continue;
                 }
-                
+
                 // Apply filters based on field type
                 if (!empty($value)) {
                     $column = $key;
-                    
+
                     // Check if column exists in the table
                     if (in_array($column, (new StudentClass())->getFillable())) {
                         // For string fields, use LIKE for partial matching
@@ -43,7 +42,7 @@ class StudentClassRepository implements StudentClassRepositoryInterface
                     }
                 }
             }
-            
+
             return $query->paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách học sinh trong lớp: ' . $e->getMessage());
@@ -106,16 +105,26 @@ class StudentClassRepository implements StudentClassRepositoryInterface
         try {
             $perPage = request()->get('per_page', 20);
             $page = request()->get('page', 1);
-            
+
             $query = StudentClass::where('student_id', $studentId)
                 ->with(['classModel' => function($query) {
                     $query->with('teacher');
                 }]);
-            
+
             return $query->paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error("Lỗi khi lấy danh sách lớp học của học sinh ID $studentId: " . $e->getMessage());
             throw new Exception('Không thể lấy danh sách lớp học của học sinh.');
         }
+    }
+
+    public function getStudentId($studentId)
+    {
+        $query = StudentClass::where('student_id', $studentId)
+            ->with(['classModel' => function($query) {
+                $query->with('teacher');
+            }]);
+
+        return $query->get();
     }
 }

@@ -2,37 +2,36 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\StudentRepositoryInterface;
 use App\Models\Attendance;
 use App\Models\Student;
 use Illuminate\Database\QueryException;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
-class StudentRepository implements StudentRepositoryInterface
+class StudentRepository
 {
     public function index($perPage = 20, $page = 1)
     {
         try {
             $perPage = request()->get('per_page', $perPage);
             $page = request()->get('page', $page);
-            
+
             $query = Student::query();
-            
+
             // Get all request parameters
             $params = request()->all();
-            
+
             // Filter by fields
             foreach ($params as $key => $value) {
                 // Skip pagination parameters
                 if (in_array($key, ['per_page', 'page'])) {
                     continue;
                 }
-                
+
                 // Apply filters based on field type
                 if (!empty($value)) {
                     $column = $key;
-                    
+
                     // Check if column exists in the table
                     if (in_array($column, (new Student())->getFillable())) {
                         // For string fields, use LIKE for partial matching
@@ -45,7 +44,7 @@ class StudentRepository implements StudentRepositoryInterface
                     }
                 }
             }
-            
+
             return $query->paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách học viên: ' . $e->getMessage());
@@ -95,16 +94,16 @@ class StudentRepository implements StudentRepositoryInterface
     {
         try {
             DB::beginTransaction();
-            
+
             $student = Student::findOrFail($id);
-            
+
             // Delete the associated user record if it exists
             if ($student->user) {
                 $student->user->delete();
             }
-            
+
             $student->delete();
-            
+
             DB::commit();
             return true;
         } catch (Exception $e) {
@@ -126,5 +125,10 @@ class StudentRepository implements StudentRepositoryInterface
             logger()->error("Lỗi khi lấy lịch sử điểm danh của học sinh ID $studentId: " . $e->getMessage());
             throw new Exception('Không thể lấy lịch sử điểm danh.');
         }
+    }
+
+    public function find(mixed $id)
+    {
+        return Student::findOrFail($id);
     }
 }

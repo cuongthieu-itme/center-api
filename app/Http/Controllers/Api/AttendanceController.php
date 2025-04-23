@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAttendanceRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use App\Services\AttendanceService;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
+
+;
 
 class AttendanceController extends Controller
 {
@@ -50,7 +52,7 @@ class AttendanceController extends Controller
     public function destroy($id)
     {
         $this->attendanceService->destroy($id);
- 
+
         return response()->json([
             'message' => 'Xóa bản ghi điểm danh thành công',
         ]);
@@ -65,7 +67,26 @@ class AttendanceController extends Controller
     public function getStudentAttendance($studentId)
     {
         $attendance = $this->attendanceService->getStudentAttendance($studentId);
-        
+
         return response()->json($attendance);
+    }
+
+    public function saveAttendance(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required',
+            'time_in' => 'required',
+        ]);
+        if (!$validated) {
+            return response()->json([
+                'message' => 'Validation Error',
+            ],422);
+        }
+
+        $id = $request->input('id');
+        $time_in = $request->input('time_in');
+
+        $result = $this->attendanceService->saveAttendence($id, $time_in);
+        return response()->json($result);
     }
 }

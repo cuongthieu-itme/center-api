@@ -10,7 +10,7 @@ use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\UploadFileController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
-
+Route::post('/save-attendance', [AttendanceController::class, 'saveAttendance']);
 Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);

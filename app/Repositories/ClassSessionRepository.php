@@ -2,35 +2,34 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\ClassSessionRepositoryInterface;
 use App\Models\ClassSession;
 use Illuminate\Database\QueryException;
 use Exception;
 
-class ClassSessionRepository implements ClassSessionRepositoryInterface
+class ClassSessionRepository
 {
     public function index()
     {
         try {
             $perPage = request()->get('per_page', 20);
             $page = request()->get('page', 1);
-            
+
             $query = ClassSession::query()->with('classModel');
-            
+
             // Get all request parameters
             $params = request()->all();
-            
+
             // Filter by fields
             foreach ($params as $key => $value) {
                 // Skip pagination parameters
                 if (in_array($key, ['per_page', 'page'])) {
                     continue;
                 }
-                
+
                 // Apply filters based on field type
                 if (!empty($value)) {
                     $column = $key;
-                    
+
                     // Check if column exists in the table
                     if (in_array($column, (new ClassSession())->getFillable())) {
                         // For string fields, use LIKE for partial matching
@@ -43,7 +42,7 @@ class ClassSessionRepository implements ClassSessionRepositoryInterface
                     }
                 }
             }
-            
+
             return $query->paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách buổi học: ' . $e->getMessage());
@@ -99,5 +98,11 @@ class ClassSessionRepository implements ClassSessionRepositoryInterface
             logger()->error("Lỗi khi xóa buổi học ID $id: " . $e->getMessage());
             throw new Exception('Xóa buổi học thất bại.');
         }
+    }
+
+    public function getByClassIDsAndDateTime(array $classIDs, string $dateNow, mixed $time_in)
+    {
+        $classSessions = ClassSession::whereIn('class_id', $classIDs)->where('session_date', $dateNow)->where('start_time', '<=', $time_in)->where('end_time', '>=', $time_in)->first();
+        return $classSessions;
     }
 }

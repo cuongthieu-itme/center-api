@@ -2,40 +2,39 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\AttendanceRepositoryInterface;
 use App\Models\Attendance;
 use Illuminate\Database\QueryException;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
-class AttendanceRepository implements AttendanceRepositoryInterface
+class AttendanceRepository
 {
     public function index()
     {
         try {
             $perPage = request()->get('per_page', 20);
             $page = request()->get('page', 1);
-            
+
             $query = Attendance::with(['student', 'classSession']);
             $params = request()->all();
             foreach ($params as $key => $value) {
-               
+
                 if (in_array($key, ['per_page', 'page'])) {
                     continue;
-                }         
+                }
                 if (!empty($value)) {
-                    $column = $key;      
+                    $column = $key;
                     if (in_array($column, (new Attendance())->getFillable())) {
-                        
+
                         if (is_string($value) && !is_numeric($value)) {
                             $query->where($column, 'LIKE', '%' . $value . '%');
                         } else {
-                          
+
                             $query->where($column, $value);
                         }
                     }
                 }
-            }    
+            }
             return $query->paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách điểm danh: ' . $e->getMessage());
@@ -120,18 +119,18 @@ class AttendanceRepository implements AttendanceRepositoryInterface
             throw $e;
         }
     }
-    
+
     public function getStudentAttendance($studentId)
     {
         try {
             $perPage = request()->get('per_page', 20);
             $page = request()->get('page', 1);
-            
+
             $query = Attendance::where('student_id', $studentId)
                 ->with(['classSession' => function($query) {
                     $query->with('classModel');
-                }, 'student']);  
-            $params = request()->all();  
+                }, 'student']);
+            $params = request()->all();
             foreach ($params as $key => $value) {
                 if (in_array($key, ['per_page', 'page', 'student_id'])) {
                     continue;
@@ -150,7 +149,7 @@ class AttendanceRepository implements AttendanceRepositoryInterface
                             $q->whereDate('session_date', '>=', $value);
                         });
                     }
-                    
+
                     if ($key === 'date_to' && !empty($value)) {
                         $query->whereHas('classSession', function($q) use ($value) {
                             $q->whereDate('session_date', '<=', $value);
@@ -163,7 +162,7 @@ class AttendanceRepository implements AttendanceRepositoryInterface
                     }
                 }
             }
-            
+
             return $query->paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error("Lỗi khi lấy thông tin điểm danh của học sinh ID $studentId: " . $e->getMessage());
