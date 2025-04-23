@@ -17,34 +17,25 @@ class AttendanceRepository implements AttendanceRepositoryInterface
             $page = request()->get('page', 1);
             
             $query = Attendance::with(['student', 'classSession']);
-            
-            // Get all request parameters
             $params = request()->all();
-            
-            // Filter by fields
             foreach ($params as $key => $value) {
-                // Skip pagination parameters
+               
                 if (in_array($key, ['per_page', 'page'])) {
                     continue;
-                }
-                
-                // Apply filters based on field type
+                }         
                 if (!empty($value)) {
-                    $column = $key;
-                    
-                    // Check if column exists in the table
+                    $column = $key;      
                     if (in_array($column, (new Attendance())->getFillable())) {
-                        // For string fields, use LIKE for partial matching
+                        
                         if (is_string($value) && !is_numeric($value)) {
                             $query->where($column, 'LIKE', '%' . $value . '%');
                         } else {
-                            // For other fields, use exact matching
+                          
                             $query->where($column, $value);
                         }
                     }
                 }
-            }
-            
+            }    
             return $query->paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách điểm danh: ' . $e->getMessage());
@@ -139,34 +130,21 @@ class AttendanceRepository implements AttendanceRepositoryInterface
             $query = Attendance::where('student_id', $studentId)
                 ->with(['classSession' => function($query) {
                     $query->with('classModel');
-                }, 'student']);
-            
-            // Get all request parameters
-            $params = request()->all();
-            
-            // Filter by fields
+                }, 'student']);  
+            $params = request()->all();  
             foreach ($params as $key => $value) {
-                // Skip pagination and student_id parameters
                 if (in_array($key, ['per_page', 'page', 'student_id'])) {
                     continue;
                 }
-                
-                // Apply filters based on field type
                 if (!empty($value)) {
                     $column = $key;
-                    
-                    // Check if column exists in the table
                     if (in_array($column, (new Attendance())->getFillable())) {
-                        // For string fields, use LIKE for partial matching
                         if (is_string($value) && !is_numeric($value)) {
                             $query->where($column, 'LIKE', '%' . $value . '%');
                         } else {
-                            // For other fields, use exact matching
                             $query->where($column, $value);
                         }
                     }
-                    
-                    // Special case for date filters
                     if ($key === 'date_from' && !empty($value)) {
                         $query->whereHas('classSession', function($q) use ($value) {
                             $q->whereDate('session_date', '>=', $value);
@@ -178,8 +156,6 @@ class AttendanceRepository implements AttendanceRepositoryInterface
                             $q->whereDate('session_date', '<=', $value);
                         });
                     }
-                    
-                    // Filter by class
                     if ($key === 'class_id' && !empty($value)) {
                         $query->whereHas('classSession', function($q) use ($value) {
                             $q->where('class_id', $value);

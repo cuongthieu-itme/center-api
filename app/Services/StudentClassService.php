@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Interfaces\StudentClassRepositoryInterface;
+use App\Repositories\StudentClassRepository;
 
 class StudentClassService
 {
     protected $studentClassRepository;
 
-    public function __construct(StudentClassRepositoryInterface $studentClassRepository)
+    public function __construct(StudentClassRepository $studentClassRepository)
     {
         $this->studentClassRepository = $studentClassRepository;
     }

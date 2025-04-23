@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Interfaces\TeacherRepositoryInterface;
+use App\Repositories\TeacherRepository;
 
 class TeacherService
 {
     protected $teacherRepository;
 
-    public function __construct(TeacherRepositoryInterface $teacherRepository)
+    public function __construct(TeacherRepository $teacherRepository)
     {
         $this->teacherRepository = $teacherRepository;
     }

@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Interfaces\ClassModelRepositoryInterface;
+use App\Repositories\ClassModelRepository;
 
 class ClassModelService
 {
     protected $classRepository;
 
-    public function __construct(ClassModelRepositoryInterface $classRepository)
+    public function __construct(ClassModelRepository $classRepository)
     {
         $this->classRepository = $classRepository;
     }

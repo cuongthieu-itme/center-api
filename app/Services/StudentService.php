@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Interfaces\StudentRepositoryInterface;
+use App\Repositories\StudentRepository;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 
@@ -10,7 +10,7 @@ class StudentService
 {
     protected $studentRepository;
 
-    public function __construct(StudentRepositoryInterface $studentRepository)
+    public function __construct(StudentRepository $studentRepository)
     {
         $this->studentRepository = $studentRepository;
     }

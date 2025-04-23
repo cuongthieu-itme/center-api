@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Interfaces\AttendanceRepositoryInterface;
+use App\Repositories\AttendanceRepository;
 
 class AttendanceService
 {
     protected $attendanceRepository;
 
-    public function __construct(AttendanceRepositoryInterface $attendanceRepository)
+    public function __construct(AttendanceRepository $attendanceRepository)
     {
         $this->attendanceRepository = $attendanceRepository;
     }

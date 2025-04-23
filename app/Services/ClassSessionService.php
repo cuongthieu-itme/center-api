@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Interfaces\ClassSessionRepositoryInterface;
+use App\Repositories\ClassSessionRepository;
 
 class ClassSessionService
 {
     protected $classSessionRepository;
 
-    public function __construct(ClassSessionRepositoryInterface $classSessionRepository)
+    public function __construct(ClassSessionRepository $classSessionRepository)
     {
         $this->classSessionRepository = $classSessionRepository;
     }

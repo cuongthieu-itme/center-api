@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Interfaces\AuthRepositoryInterface;
+use App\Repositories\AuthRepository;
 
 class AuthService
 {
     protected $authRepository;
 
-    public function __construct(AuthRepositoryInterface $authRepository)
+    public function __construct(AuthRepository $authRepository)
     {
         $this->authRepository = $authRepository;
     }

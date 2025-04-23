@@ -50,7 +50,7 @@ class AttendanceController extends Controller
     public function destroy($id)
     {
         $this->attendanceService->destroy($id);
-
+ 
         return response()->json([
             'message' => 'Xóa bản ghi điểm danh thành công',
         ]);
