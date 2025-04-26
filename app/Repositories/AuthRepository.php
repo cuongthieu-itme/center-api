@@ -3,13 +3,12 @@
 namespace App\Repositories;
 
 use App\Models\User;
-use App\Interfaces\AuthRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
 use Exception;
 
-class AuthRepository implements AuthRepositoryInterface
+class AuthRepository  
 {
     public function register($data)
     {

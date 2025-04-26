@@ -2,13 +2,12 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\UserRepositoryInterface;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
-class UserRepository implements UserRepositoryInterface
+class UserRepository
 {
     public function index($perPage = 20, $page = 1)
     {

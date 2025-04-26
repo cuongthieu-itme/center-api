@@ -169,4 +169,28 @@ class AttendanceRepository
             throw new Exception('Không thể lấy thông tin điểm danh của học sinh.');
         }
     }
+
+    public function getAttendanceDataExport($classId,$teacherID)
+    {
+        $query = Attendance::select(
+            'attendance.*',
+            'students.full_name',
+            'students.dob',
+            'students.phone',
+            'students.email',
+            'students.address',
+            'class_sessions.session_date',
+            'class_sessions.start_time',
+            'class_sessions.end_time',
+            'classes.teacher_id',
+            'classes.class_name',
+        )
+            ->leftJoin('students', 'students.id', '=', 'attendance.student_id')
+            ->leftJoin('class_sessions', 'class_sessions.id', '=', 'attendance.session_id')
+            ->leftJoin('classes', 'classes.id', '=', 'class_sessions.class_id');
+        if ($classId){
+            $query->where('class_sessions.class_id', $classId);
+        }
+        return $query->get();
+    }
 }

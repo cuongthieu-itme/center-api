@@ -7,6 +7,7 @@ use App\Http\Requests\StoreAttendanceRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use App\Services\AttendanceService;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 ;
 
@@ -87,6 +88,19 @@ class AttendanceController extends Controller
         $time_in = $request->input('time_in');
 
         $result = $this->attendanceService->saveAttendence($id, $time_in);
-        return response()->json($result);
+        return response()->json([
+            'data' => $result,
+        ]);
+    }
+
+    public function exportAttendance(Request $request)
+    {
+
+        $classID = $request->input('class_id');
+        $teacherID = $request->input('teacher_id');
+
+        $formattedData = $this->attendanceService->exportAttendance($classID,$teacherID);
+        // Export to Excel using the facade
+        return Excel::download(new \App\Exports\AttendanceExport($formattedData), 'attendance_report.xlsx');
     }
 }

@@ -2,13 +2,12 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\TeacherRepositoryInterface;
 use App\Models\Teacher;
 use Illuminate\Database\QueryException;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
-class TeacherRepository implements TeacherRepositoryInterface
+class TeacherRepository 
 {
     public function index()
     {
