@@ -8,27 +8,27 @@ use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
-class UserRepository implements UserRepositoryInterface
+class UserRepository
 {
     public function index($perPage = 20, $page = 1)
     {
         try {
             $query = User::query();
-            
+
             // Get all request parameters
             $params = request()->all();
-            
+
             // Filter by fields
             foreach ($params as $key => $value) {
                 // Skip pagination parameters
                 if (in_array($key, ['per_page', 'page'])) {
                     continue;
                 }
-                
+
                 // Apply filters based on field type
                 if (!empty($value)) {
                     $column = $key;
-                    
+
                     // Check if column exists in the table
                     if (in_array($column, (new User())->getFillable())) {
                         // For string fields, use LIKE for partial matching
@@ -41,10 +41,10 @@ class UserRepository implements UserRepositoryInterface
                     }
                 }
             }
-            
+
             // Load appropriate relationship based on role
             $query->with(['teacher', 'student']);
-            
+
             return $query->paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách người dùng: ' . $e->getMessage());
@@ -56,14 +56,14 @@ class UserRepository implements UserRepositoryInterface
     {
         try {
             $user = User::findOrFail($id);
-            
+
             // Load teacher or student relationships based on role
             if ($user->role === 'teacher') {
                 $user->load('teacher');
             } elseif ($user->role === 'student') {
                 $user->load('student');
             }
-            
+
             return $user;
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy thông tin người dùng: ' . $e->getMessage());
@@ -76,7 +76,7 @@ class UserRepository implements UserRepositoryInterface
         try {
             // Start a database transaction
             \DB::beginTransaction();
-            
+
             // Create the user
             $user = User::create([
                 'name' => $data['name'],
@@ -84,7 +84,7 @@ class UserRepository implements UserRepositoryInterface
                 'password' => bcrypt($data['password']),
                 'role' => $data['role'] ?? 'user',
             ]);
-            
+
             // If role is teacher, create a teacher record
             if ($user->role === 'teacher') {
                 $user->teacher()->create([
@@ -93,7 +93,7 @@ class UserRepository implements UserRepositoryInterface
                     'user_id' => $user->id
                 ]);
             }
-            
+
             // If role is student, create a student record
             if ($user->role === 'student') {
                 $user->student()->create([
@@ -102,10 +102,10 @@ class UserRepository implements UserRepositoryInterface
                     'user_id' => $user->id
                 ]);
             }
-            
+
             // Commit the transaction
             \DB::commit();
-            
+
             return $user;
         } catch (QueryException $e) {
             // Rollback the transaction
@@ -125,7 +125,7 @@ class UserRepository implements UserRepositoryInterface
         try {
             // Start a database transaction
             \DB::beginTransaction();
-            
+
             $user = User::findOrFail($id);
             $oldRole = $user->role;
 
@@ -136,12 +136,12 @@ class UserRepository implements UserRepositoryInterface
             if (isset($data['password'])) $updateData['password'] = bcrypt($data['password']);
 
             $user->update($updateData);
-            
+
             // If role has changed, handle the associated records
             if (isset($data['role']) && $oldRole !== $data['role']) {
                 // If old role was teacher or student, we might need to delete the old record
                 // (or you could keep it, based on your business logic)
-                
+
                 // If new role is teacher, create teacher record
                 if ($data['role'] === 'teacher') {
                     // Check if teacher record already exists
@@ -153,7 +153,7 @@ class UserRepository implements UserRepositoryInterface
                         ]);
                     }
                 }
-                
+
                 // If new role is student, create student record
                 if ($data['role'] === 'student') {
                     // Check if student record already exists
@@ -167,14 +167,14 @@ class UserRepository implements UserRepositoryInterface
                     }
                 }
             }
-            
+
             // Update related teacher or student record information if needed
             if (isset($data['name']) || isset($data['email'])) {
                 if ($user->role === 'teacher' && $user->teacher) {
                     $teacherUpdate = [];
                     if (isset($data['name'])) $teacherUpdate['full_name'] = $data['name'];
                     if (isset($data['email'])) $teacherUpdate['email'] = $data['email'];
-                    
+
                     if (!empty($teacherUpdate)) {
                         $user->teacher->update($teacherUpdate);
                     }
@@ -182,16 +182,16 @@ class UserRepository implements UserRepositoryInterface
                     $studentUpdate = [];
                     if (isset($data['name'])) $studentUpdate['full_name'] = $data['name'];
                     if (isset($data['email'])) $studentUpdate['email'] = $data['email'];
-                    
+
                     if (!empty($studentUpdate)) {
                         $user->student->update($studentUpdate);
                     }
                 }
             }
-            
+
             // Commit the transaction
             \DB::commit();
-            
+
             return $user;
         } catch (Exception $e) {
             // Rollback the transaction
@@ -206,21 +206,21 @@ class UserRepository implements UserRepositoryInterface
         try {
             // Start a database transaction
             \DB::beginTransaction();
-            
+
             $user = User::findOrFail($id);
-            
+
             // Delete associated teacher or student record if exists
             if ($user->role === 'teacher' && $user->teacher) {
                 $user->teacher->delete();
             } elseif ($user->role === 'student' && $user->student) {
                 $user->student->delete();
             }
-            
+
             $user->delete();
-            
+
             // Commit the transaction
             \DB::commit();
-            
+
             return true;
         } catch (Exception $e) {
             // Rollback the transaction
