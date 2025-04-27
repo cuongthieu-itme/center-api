@@ -7,30 +7,30 @@ use Illuminate\Database\QueryException;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
-class TeacherRepository 
+class TeacherRepository
 {
     public function index()
     {
         try {
             $perPage = request()->get('per_page', 20);
             $page = request()->get('page', 1);
-            
+
             $query = Teacher::query();
-            
+
             // Get all request parameters
             $params = request()->all();
-            
+
             // Filter by fields
             foreach ($params as $key => $value) {
                 // Skip pagination parameters
                 if (in_array($key, ['per_page', 'page'])) {
                     continue;
                 }
-                
+
                 // Apply filters based on field type
                 if (!empty($value)) {
                     $column = $key;
-                    
+
                     // Check if column exists in the table
                     if (in_array($column, (new Teacher())->getFillable())) {
                         // For string fields, use LIKE for partial matching
@@ -43,7 +43,7 @@ class TeacherRepository
                     }
                 }
             }
-            
+
             return $query->paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error('Lỗi khi lấy danh sách giáo viên: ' . $e->getMessage());
@@ -93,16 +93,16 @@ class TeacherRepository
     {
         try {
             DB::beginTransaction();
-            
+
             $teacher = Teacher::findOrFail($id);
-            
+
             // Delete the associated user record if it exists
             if ($teacher->user) {
                 $teacher->user->delete();
             }
-            
+
             $teacher->delete();
-            
+
             DB::commit();
             return true;
         } catch (Exception $e) {
@@ -118,30 +118,30 @@ class TeacherRepository
             $perPage = request()->get('per_page', 20);
             $page = request()->get('page', 1);
             $params = request()->all();
-            
+
             $teacher = Teacher::findOrFail($id);
-            
+
             // Lấy tất cả lớp học của giáo viên này
             $classes = $teacher->classes;
-            
+
             // Thu thập tất cả học sinh từ các lớp học
             $studentsCollection = collect();
-            
+
             foreach ($classes as $class) {
                 $students = $class->students;
                 $studentsCollection = $studentsCollection->concat($students);
             }
-            
+
             // Loại bỏ các học sinh trùng lặp
             $studentsCollection = $studentsCollection->unique('id');
-            
+
             // Áp dụng bộ lọc
             foreach ($params as $key => $value) {
                 // Bỏ qua tham số phân trang
                 if (in_array($key, ['per_page', 'page'])) {
                     continue;
                 }
-                
+
                 // Áp dụng bộ lọc dựa trên loại trường
                 if (!empty($value)) {
                     $studentsCollection = $studentsCollection->filter(function ($student) use ($key, $value) {
@@ -159,12 +159,12 @@ class TeacherRepository
                     });
                 }
             }
-            
+
             // Phân trang thủ công
             $total = $studentsCollection->count();
             $lastPage = ceil($total / $perPage);
             $items = $studentsCollection->forPage($page, $perPage)->values();
-            
+
             // Tạo đối tượng phân trang thủ công
             $paginatedResult = new \Illuminate\Pagination\LengthAwarePaginator(
                 $items,
@@ -173,9 +173,9 @@ class TeacherRepository
                 $page,
                 ['path' => request()->url(), 'query' => request()->query()]
             );
-            
+
             return $paginatedResult;
-            
+
         } catch (Exception $e) {
             logger()->error("Lỗi khi lấy danh sách học sinh của giáo viên ID $id: " . $e->getMessage());
             throw new Exception('Không thể lấy danh sách học sinh của giáo viên.');
