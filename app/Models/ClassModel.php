@@ -14,7 +14,6 @@ class ClassModel extends Model
     protected $fillable = [
         'class_name',
         'teacher_id',
-        'schedule'
     ];
 
     public function teacher()

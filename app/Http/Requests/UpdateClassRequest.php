@@ -18,7 +18,6 @@ class UpdateClassRequest extends FormRequest
         return [
             'class_name'  => 'sometimes|required|string|max:255',
             'teacher_id'  => 'sometimes|required|exists:teachers,id',
-            'schedule'    => 'sometimes|required|string'
         ];
     }
 }

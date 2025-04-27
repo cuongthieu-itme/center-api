@@ -15,9 +15,9 @@ class StoreClassSessionRequest extends FormRequest
     {
         return [
             'class_id'     => 'required|exists:classes,id',
-            'session_date' => 'required|date',
-            'start_time'   => 'required|date',
-            'end_time'     => 'required|date|after:start_time',
+            'session_date' => 'required',
+            'start_time'   => 'required',
+            'end_time'     => 'required',
         ];
     }
 }

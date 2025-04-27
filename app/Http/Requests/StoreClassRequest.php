@@ -16,7 +16,6 @@ class StoreClassRequest extends FormRequest
         return [
             'class_name'  => 'required|string|max:255',
             'teacher_id'  => 'required|exists:teachers,id',
-            'schedule'    => 'required|string'
         ];
     }
 }
