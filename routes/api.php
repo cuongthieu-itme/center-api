@@ -11,7 +11,6 @@ use App\Http\Controllers\Api\UploadFileController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::post('/save-attendance', [AttendanceController::class, 'saveAttendance']);
 Route::get('/export-attandance', [AttendanceController::class, 'exportAttendance']);
 Route::prefix('auth')->group(function () {
@@ -24,6 +23,9 @@ Route::prefix('auth')->group(function () {
         Route::get('verify-auth', [AuthController::class, 'verifyAuth']);
     });
 });
+
+// API endpoint to get students by class - accessible without role restriction
+Route::get('/classes/{id}/students-list', [ClassModelController::class, 'getStudentsByClass']);
 
 // Các route cần xác thực người dùng trước
 Route::middleware('auth:sanctum')->group(function () {

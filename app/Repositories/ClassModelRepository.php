@@ -103,8 +103,37 @@ class ClassModelRepository
     public function getStudentsByClass($classId)
     {
         try {
-            $class = ClassModel::with('students')->findOrFail($classId);
-            return $class->students;
+            $perPage = request()->get('per_page', 20);
+            $page = request()->get('page', 1);
+            
+            $class = ClassModel::findOrFail($classId);
+            
+            // Get student query builder to apply pagination
+            $studentsQuery = $class->students();
+            
+            // Get all request parameters for filtering
+            $params = request()->all();
+            
+            // Apply filters if needed (similar to index method)
+            foreach ($params as $key => $value) {
+                // Skip pagination parameters
+                if (in_array($key, ['per_page', 'page'])) {
+                    continue;
+                }
+                
+                // Check if the column exists in the pivot table or the student model
+                if (!empty($value)) {
+                    // For string fields, use LIKE for partial matching
+                    if (is_string($value) && !is_numeric($value)) {
+                        $studentsQuery->where($key, 'LIKE', '%' . $value . '%');
+                    } else {
+                        // For other fields, use exact matching
+                        $studentsQuery->where($key, $value);
+                    }
+                }
+            }
+            
+            return $studentsQuery->paginate($perPage, ['*'], 'page', $page);
         } catch (Exception $e) {
             logger()->error("Lỗi khi lấy danh sách học sinh của lớp học ID $classId: " . $e->getMessage());
             throw new Exception('Không thể lấy danh sách học sinh của lớp học.');
