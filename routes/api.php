@@ -61,4 +61,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Upload file
     Route::post('/upload', [UploadFileController::class, 'upload']);
+    Route::get('/view-file/{filename}', [UploadFileController::class, 'viewFile']);
 });
