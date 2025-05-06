@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\StudentRepository;
 use Exception;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class StudentService
 {
@@ -60,5 +61,19 @@ class StudentService
         $path = $file->storeAs('avatars', $fileName, 'public');
 
         return $path;
+    }
+
+    /**
+     * Change student's password
+     *
+     * @param int $userID
+     * @param string $currentPassword
+     * @param string $newPassword
+     * @return bool
+     * @throws Exception
+     */
+    public function changePassword($userID, $currentPassword, $newPassword)
+    {
+        return $this->studentRepository->changePassword($userID, $currentPassword, $newPassword);
     }
 }

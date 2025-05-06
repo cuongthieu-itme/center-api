@@ -55,6 +55,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Student có thể xem thông tin cá nhân và điểm danh của mình
     Route::middleware('role:student')->group(function () {
         Route::get('students/{id}/attendance-history', [StudentController::class, 'getAttendanceHistory']);
+        // Add this route to your existing routes
+        Route::post('/students/change-password', [StudentController::class, 'changePassword']);
     });
 
     // Upload file

@@ -4,9 +4,11 @@ namespace App\Repositories;
 
 use App\Models\Attendance;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Database\QueryException;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class StudentRepository
 {
@@ -130,5 +132,41 @@ class StudentRepository
     public function find(mixed $id)
     {
         return Student::findOrFail($id);
+    }
+
+    /**
+     * Change student's password
+     *
+     * @param int $studentId
+     * @param string $currentPassword
+     * @param string $newPassword
+     * @return bool
+     * @throws Exception
+     */
+    public function changePassword($userID, $currentPassword, $newPassword)
+    {
+        try {
+            DB::beginTransaction();
+            $user = User::findOrFail($userID);
+
+            if (!$user) {
+                throw new Exception('Không tìm thấy tài khoản người dùng liên kết với học viên này');
+            }
+
+            // Check if current password matches
+            if (!Hash::check($currentPassword, $user->password)) {
+                throw new Exception('Mật khẩu hiện tại không chính xác');
+            }
+
+            // Update password
+            $user->password = Hash::make($newPassword);
+            $user->save();
+
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }

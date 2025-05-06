@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\StudentService;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
+use App\Http\Requests\ChangePasswordRequest;
 use Exception;
 use Illuminate\Support\Facades\Request;
 
@@ -70,5 +71,27 @@ class StudentController extends Controller
             'student_id' => $id,
             'attendance_history' => $history
         ]);
+    }
+
+    /**
+     * Change student's password
+     */
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        try {
+            $result = $this->studentService->changePassword(
+                $request->user_id,
+                $request->current_password,
+                $request->new_password
+            );
+
+            return response()->json([
+                'message' => 'Đổi mật khẩu thành công'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 400);
+        }
     }
 }
