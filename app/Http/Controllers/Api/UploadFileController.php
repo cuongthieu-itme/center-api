@@ -27,4 +27,20 @@ class UploadFileController extends Controller
             'message' => 'Không có file hoặc file không hợp lệ.',
         ], 400);
     }
+    
+    public function viewFile($filename)
+    {
+        $path = 'uploads/' . $filename;
+        
+        if (!Storage::disk('public')->exists($path)) {
+            return response()->json([
+                'message' => 'File không tồn tại.'
+            ], 404);
+        }
+        
+        $file = Storage::disk('public')->get($path);
+        $type = Storage::disk('public')->mimeType($path);
+        
+        return response($file, 200)->header('Content-Type', $type);
+    }
 }
