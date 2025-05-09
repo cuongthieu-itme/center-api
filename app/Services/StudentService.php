@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\StudentRepository;
 use App\Repositories\StudentClassRepository;
 use App\Repositories\ClassSessionRepository;
+use App\Repositories\AttendanceRepository;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -14,15 +15,18 @@ class StudentService
     protected $studentRepository;
     protected $studentClassRepository;
     protected $classSessionRepository;
+    protected $attendanceRepository;
 
     public function __construct(
         StudentRepository $studentRepository,
         StudentClassRepository $studentClassRepository,
-        ClassSessionRepository $classSessionRepository
+        ClassSessionRepository $classSessionRepository,
+        AttendanceRepository $attendanceRepository
     ) {
         $this->studentRepository = $studentRepository;
         $this->studentClassRepository = $studentClassRepository;
         $this->classSessionRepository = $classSessionRepository;
+        $this->attendanceRepository = $attendanceRepository;
     }
 
     public function index($perPage = 20, $page = 1)
@@ -124,5 +128,16 @@ class StudentService
         $query = $this->classSessionRepository->getSessionsByClassIds($classIds, $fromDate, $toDate);
         
         return $query;
+    }
+
+    /**
+     * Get attendance records for a student
+     *
+     * @param int $studentId
+     * @return array
+     */
+    public function getStudentAttendance($studentId)
+    {
+        return $this->attendanceRepository->getStudentAttendance($studentId);
     }
 }

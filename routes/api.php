@@ -63,6 +63,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/student/classes', [StudentController::class, 'getMyClasses']);
         // New route to get schedule for the logged-in student
         Route::get('/student/schedule', [StudentController::class, 'getMySchedule']);
+        // New route to get attendance records for the logged-in student
+        Route::get('/student/attendance', [StudentController::class, 'getMyAttendance']);
     });
 
     // Upload file

@@ -147,4 +147,33 @@ class StudentController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get attendance records for the currently logged-in student
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMyAttendance()
+    {
+        $user = Auth::user();
+        $studentId = $user->student->id ?? null;
+        
+        if (!$studentId) {
+            return response()->json([
+                'message' => 'Học viên không tồn tại'
+            ], 404);
+        }
+        
+        try {
+            $attendance = $this->studentService->getStudentAttendance($studentId);
+            
+            return response()->json([
+                'attendance' => $attendance
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
