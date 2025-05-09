@@ -105,4 +105,41 @@ class ClassSessionRepository
         $classSessions = ClassSession::whereIn('class_id', $classIDs)->where('session_date', $dateNow)->where('start_time', '<=', $time_in)->where('end_time', '>=', $time_in)->first();
         return $classSessions;
     }
+
+    /**
+     * Get sessions by class IDs with optional date filters
+     *
+     * @param array $classIds
+     * @param string|null $fromDate
+     * @param string|null $toDate
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getSessionsByClassIds(array $classIds, $fromDate = null, $toDate = null)
+    {
+        try {
+            $perPage = request()->get('per_page', 10);
+            $page = request()->get('page', 1);
+
+            $query = ClassSession::whereIn('class_id', $classIds)
+                ->with('classModel');
+            
+            // Apply date filters if provided
+            if ($fromDate) {
+                $query->where('session_date', '>=', $fromDate);
+            }
+            
+            if ($toDate) {
+                $query->where('session_date', '<=', $toDate);
+            }
+            
+            // Order by date and time
+            $query->orderBy('session_date', 'asc')
+                  ->orderBy('start_time', 'asc');
+            
+            return $query->paginate($perPage, ['*'], 'page', $page);
+        } catch (Exception $e) {
+            logger()->error('Lỗi khi lấy lịch học: ' . $e->getMessage());
+            throw new Exception('Không thể lấy lịch học.');
+        }
+    }
 }

@@ -61,6 +61,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/students/change-password', [StudentController::class, 'changePassword']);
         // New route to get classes for the logged-in student
         Route::get('/student/classes', [StudentController::class, 'getMyClasses']);
+        // New route to get schedule for the logged-in student
+        Route::get('/student/schedule', [StudentController::class, 'getMySchedule']);
     });
 
     // Upload file

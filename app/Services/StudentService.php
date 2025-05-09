@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\StudentRepository;
 use App\Repositories\StudentClassRepository;
+use App\Repositories\ClassSessionRepository;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -12,13 +13,16 @@ class StudentService
 {
     protected $studentRepository;
     protected $studentClassRepository;
+    protected $classSessionRepository;
 
     public function __construct(
         StudentRepository $studentRepository,
-        StudentClassRepository $studentClassRepository
+        StudentClassRepository $studentClassRepository,
+        ClassSessionRepository $classSessionRepository
     ) {
         $this->studentRepository = $studentRepository;
         $this->studentClassRepository = $studentClassRepository;
+        $this->classSessionRepository = $classSessionRepository;
     }
 
     public function index($perPage = 20, $page = 1)
@@ -91,5 +95,34 @@ class StudentService
     public function getStudentClasses($studentId)
     {
         return $this->studentClassRepository->getClassesByStudentId($studentId);
+    }
+
+    /**
+     * Get schedule for a student
+     *
+     * @param int $studentId
+     * @return array
+     */
+    public function getStudentSchedule($studentId)
+    {
+        // Get all classes the student is enrolled in
+        $studentClasses = $this->studentClassRepository->getClassesByStudentId($studentId);
+        
+        // Get class IDs
+        $classIds = [];
+        foreach ($studentClasses as $class) {
+            $classIds[] = $class->class_id;
+        }
+        
+        // Filter parameters
+        $perPage = request()->get('per_page', 10);
+        $page = request()->get('page', 1);
+        $fromDate = request()->get('from_date');
+        $toDate = request()->get('to_date');
+        
+        // Query to get class sessions for these classes
+        $query = $this->classSessionRepository->getSessionsByClassIds($classIds, $fromDate, $toDate);
+        
+        return $query;
     }
 }

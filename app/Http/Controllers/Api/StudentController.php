@@ -118,4 +118,33 @@ class StudentController extends Controller
             'classes' => $classes
         ]);
     }
+
+    /**
+     * Get schedule for the currently logged-in student
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMySchedule()
+    {
+        $user = Auth::user();
+        $studentId = $user->student->id ?? null;
+        
+        if (!$studentId) {
+            return response()->json([
+                'message' => 'Học viên không tồn tại'
+            ], 404);
+        }
+        
+        try {
+            $schedule = $this->studentService->getStudentSchedule($studentId);
+            
+            return response()->json([
+                'schedule' => $schedule
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
