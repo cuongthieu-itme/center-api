@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use Exception;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
 {
@@ -93,5 +94,28 @@ class StudentController extends Controller
                 'message' => $e->getMessage()
             ], 400);
         }
+    }
+
+    /**
+     * Get classes for the currently logged-in student
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMyClasses()
+    {
+        $user = Auth::user();
+        $studentId = $user->student->id ?? null;
+        
+        if (!$studentId) {
+            return response()->json([
+                'message' => 'Học viên không tồn tại'
+            ], 404);
+        }
+        
+        $classes = $this->studentService->getStudentClasses($studentId);
+        
+        return response()->json([
+            'classes' => $classes
+        ]);
     }
 }

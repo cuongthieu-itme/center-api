@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\StudentRepository;
+use App\Repositories\StudentClassRepository;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -10,10 +11,14 @@ use Illuminate\Support\Facades\Hash;
 class StudentService
 {
     protected $studentRepository;
+    protected $studentClassRepository;
 
-    public function __construct(StudentRepository $studentRepository)
-    {
+    public function __construct(
+        StudentRepository $studentRepository,
+        StudentClassRepository $studentClassRepository
+    ) {
         $this->studentRepository = $studentRepository;
+        $this->studentClassRepository = $studentClassRepository;
     }
 
     public function index($perPage = 20, $page = 1)
@@ -75,5 +80,16 @@ class StudentService
     public function changePassword($userID, $currentPassword, $newPassword)
     {
         return $this->studentRepository->changePassword($userID, $currentPassword, $newPassword);
+    }
+
+    /**
+     * Get classes for a student
+     *
+     * @param int $studentId
+     * @return array
+     */
+    public function getStudentClasses($studentId)
+    {
+        return $this->studentClassRepository->getClassesByStudentId($studentId);
     }
 }

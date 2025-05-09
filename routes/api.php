@@ -59,6 +59,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('students/{id}/attendance-history', [StudentController::class, 'getAttendanceHistory']);
         // Add this route to your existing routes
         Route::post('/students/change-password', [StudentController::class, 'changePassword']);
+        // New route to get classes for the logged-in student
+        Route::get('/student/classes', [StudentController::class, 'getMyClasses']);
     });
 
     // Upload file
