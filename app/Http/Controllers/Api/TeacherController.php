@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Services\TeacherService;
 use App\Http\Requests\StoreTeacherRequest;
 use App\Http\Requests\UpdateTeacherRequest;
+use Illuminate\Support\Facades\Auth;
+use Exception;
 
 class TeacherController extends Controller
 {
@@ -64,5 +66,63 @@ class TeacherController extends Controller
         $students = $this->teacherService->getStudentsByTeacherId($id);
         
         return response()->json($students);
+    }
+    
+    /**
+     * Get all students for the currently logged-in teacher
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMyStudents()
+    {
+        $user = Auth::user();
+        $teacherId = $user->teacher->id ?? null;
+        
+        if (!$teacherId) {
+            return response()->json([
+                'message' => 'Giáo viên không tồn tại'
+            ], 404);
+        }
+        
+        try {
+            $students = $this->teacherService->getStudentsByTeacherId($teacherId);
+            
+            return response()->json([
+                'students' => $students
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Get classes with schedule for the currently logged-in teacher
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMyClassesWithSchedule()
+    {
+        $user = Auth::user();
+        $teacherId = $user->teacher->id ?? null;
+        
+        if (!$teacherId) {
+            return response()->json([
+                'message' => 'Giáo viên không tồn tại'
+            ], 404);
+        }
+        
+        try {
+            $classesWithSchedule = $this->teacherService->getTeacherClassesWithSchedule($teacherId);
+            
+            // Return the paginator directly
+            // Laravel will automatically convert it to the proper JSON format
+            return response()->json($classesWithSchedule);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

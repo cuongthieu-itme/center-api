@@ -52,6 +52,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('students/{id}/attendance-history', [StudentController::class, 'getAttendanceHistory']);
         Route::get('classes/{id}/sessions', [ClassModelController::class, 'getClassSessions']);
         Route::post('attendance/bulk', [AttendanceController::class, 'bulkStore']);
+        // New route to get all students for the logged-in teacher
+        Route::get('/teacher/students', [TeacherController::class, 'getMyStudents']);
+        // New route to get classes with schedule for the logged-in teacher
+        Route::get('/teacher/classes-schedule', [TeacherController::class, 'getMyClassesWithSchedule']);
     });
 
     // Student có thể xem thông tin cá nhân và điểm danh của mình
