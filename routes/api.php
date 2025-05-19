@@ -56,6 +56,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/teacher/students', [TeacherController::class, 'getMyStudents']);
         // New route to get classes with schedule for the logged-in teacher
         Route::get('/teacher/classes-schedule', [TeacherController::class, 'getMyClassesWithSchedule']);
+        // New route to get student attendance by ID with pagination
+        Route::get('teacher/students/{id}/attendance', [AttendanceController::class, 'getStudentAttendanceById']);
     });
 
     // Student có thể xem thông tin cá nhân và điểm danh của mình
